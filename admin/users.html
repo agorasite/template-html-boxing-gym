@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - Users</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" />
+  <style>
+     body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        }
+
+        .container-fluid {
+        display: flex;
+        width: 100%;
+        }
+
+        header {
+        background: #800000;
+        color: #fff;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        box-sizing: border-box;
+        }
+
+        .header-left {
+        flex: 1;
+        }
+
+        .header-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        }
+
+        nav {
+        width: 200px;
+        background: #a52a2a;
+        color: #fff;
+        position: fixed;
+        top: 50px;
+        left: 0;
+        height: calc(100vh - 50px);
+        overflow-y: auto;
+        z-index: 1100;
+        }
+
+        .burger-menu {
+        display: none;
+        }
+
+        nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        }
+
+        nav ul li a {
+        display: block;
+        padding: 15px 20px;
+        color: #fff;
+        text-decoration: none;
+        border-bottom: 1px solid #800000;
+        box-sizing: border-box;
+        }
+
+        nav ul li a:hover,
+        nav ul li a.active {
+        background: #800000;
+        font-weight: bold;
+        }
+
+        .content {
+        margin-left: 200px;
+        margin-top: 50px;
+        padding: 20px;
+        width: calc(100% - 200px);
+        box-sizing: border-box;
+        }
+
+        .content section {
+        margin-bottom: 20px;
+        background: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        box-sizing: border-box;
+        }
+
+        table {
+        width: 100%;
+        border-collapse: collapse;
+        }
+
+        th,
+        td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+        }
+
+        th {
+        background-color: #f2f2f2;
+        }
+
+        .active-status {
+        color: green;
+        }
+
+        .inactive-status {
+        color: red;
+        }
+
+        .card-container {
+        display: none;
+        }
+
+        .card {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 10px;
+        background: #fff;
+        }
+
+        .card p {
+        margin: 5px 0;
+        }
+
+        .modal {
+        display: none;
+        position: fixed;
+        z-index: 1001;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%;
+        max-width: 500px;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        }
+
+        .close:hover {
+        color: black;
+        }
+
+        @media screen and (max-width: 768px) {
+        .burger-menu {
+            display: block;
+            position: relative;
+            background: transparent;
+            color: white;
+            padding: 0 10px 0 0;
+            cursor: pointer;
+        }
+
+        header {
+            justify-content: space-between;
+        }
+
+        nav {
+            width: 0;
+            transition: width 0.3s;
+            overflow: hidden;
+        }
+
+        nav.open {
+            width: 200px;
+        }
+
+        .content {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        table {
+            display: none;
+        }
+
+        .card-container {
+            display: block;
+        }
+
+        .modal-content {
+            width: 95%;
+            margin: 20px auto;
+            border-radius: 0;
+        }
+        }
+
+        #sidebar .nav-link {
+        color: #ffffff !important;
+        /* white */
+        }
+
+        #sidebar .nav-link.active {
+            color: #0d6efd !important;
+            font-weight: bold;
+        }
+
+        #current-time {
+        white-space: nowrap;
+        }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="burger-menu">☰</div>
+  <div class="header-left"><h1 style="margin: 0; font-size: 24px;">Users</h1></div>
+  <div class="header-right">
+    <div id="current-time"></div>
+    <select id="language-select" class="form-select">
+      <option value="en">English</option>
+      <option value="gr">Greek</option>
+    </select>
+  </div>
+</header>
+
+<div class="container-fluid">
+  <nav id="sidebar">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+          <a class="nav-link" href="index.html"><i class="bi bi-house-door"></i> Home</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="classes.html"><i class="bi bi-people"></i> Classes</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="about.html"><i class="bi bi-info-circle"></i> About</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="pricing.html"><i class="bi bi-tag"></i> Pricing</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="appointments.html"><i class="bi bi-calendar-check"></i> Appointments</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link active" href="users.html"><i class="bi bi-people"></i> Users</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="payments.html"><i class="bi bi-credit-card"></i> Payments</a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="content">
+    <section>
+      <h2><i class="bi bi-people"></i> Manage Users</h2>
+      <button type="button" class="btn btn-primary" onclick="openUserModal()"><i class="bi bi-plus"></i> Add User</button>
+    </section>
+
+    <section>
+      <h2><i class="bi bi-table"></i> User List</h2>
+      <div class="filter-section">
+        <label for="filter-role" class="form-label"><i class="bi bi-filter"></i> Filter by Role:</label>
+        <select id="filter-role" class="form-select" onchange="filterUsers()">
+          <option value="all">All</option>
+          <option value="student">Student</option>
+          <option value="teacher">Teacher</option>
+          <option value="manager">Manager</option>
+        </select>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="users-table-body"></tbody>
+      </table>
+
+      <div class="card-container" id="users-card-container"></div>
+    </section>
+  </div>
+</div>
+
+<!-- Add User Modal -->
+<div id="addUserModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeUserModal()">&times;</span>
+    <h2><i class="bi bi-person-plus"></i> Add User</h2>
+    <form id="add-user-form">
+      <input type="text" id="user-name" placeholder="Name" required>
+      <input type="email" id="user-email" placeholder="Email" required>
+      <input type="tel" id="user-phone" placeholder="Phone" required>
+      <select id="user-role" required>
+        <option value="student">Student</option>
+        <option value="teacher">Teacher</option>
+        <option value="manager">Manager</option>
+      </select>
+      <select id="user-status" required>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+      <button type="button" class="btn btn-primary" onclick="addUser()">Add User</button>
+    </form>
+  </div>
+</div>
+
+<!-- Edit User Modal -->
+<div id="editUserModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeUserModal()">&times;</span>
+    <h2><i class="bi bi-pencil-square"></i> Edit User</h2>
+    <form id="edit-user-form">
+      <input type="text" id="edit-user-name" required>
+      <input type="email" id="edit-user-email" required>
+      <input type="tel" id="edit-user-phone" required>
+      <select id="edit-user-role" required>
+        <option value="student">Student</option>
+        <option value="teacher">Teacher</option>
+        <option value="manager">Manager</option>
+      </select>
+      <select id="edit-user-status" required>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+      <button type="button" class="btn btn-primary" onclick="saveEditedUser()">Save Changes</button>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+let usersData = [
+  { name: "John Doe", email: "john.doe@example.com", phone: "555-1234", role: "student", status: "active" },
+  { name: "Jane Smith", email: "jane.smith@example.com", phone: "555-5678", role: "teacher", status: "active" },
+  { name: "Mike Johnson", email: "mike.johnson@example.com", phone: "555-9012", role: "manager", status: "inactive" }
+];
+let currentEditIndex = -1;
+
+function openUserModal() { document.getElementById('addUserModal').style.display = 'block'; }
+function closeUserModal() { document.getElementById('addUserModal').style.display = 'none'; document.getElementById('editUserModal').style.display = 'none'; }
+
+function openEditUserModal(index) {
+  const user = usersData[index];
+  document.getElementById('edit-user-name').value = user.name;
+  document.getElementById('edit-user-email').value = user.email;
+  document.getElementById('edit-user-phone').value = user.phone;
+  document.getElementById('edit-user-role').value = user.role;
+  document.getElementById('edit-user-status').value = user.status;
+  currentEditIndex = index;
+  document.getElementById('editUserModal').style.display = 'block';
+}
+
+function addUser() {
+  const name = document.getElementById('user-name').value;
+  const email = document.getElementById('user-email').value;
+  const phone = document.getElementById('user-phone').value;
+  const role = document.getElementById('user-role').value;
+  const status = document.getElementById('user-status').value;
+  if (name && email && phone && role && status) {
+    usersData.push({ name, email, phone, role, status });
+    renderUsers(); closeUserModal(); document.getElementById('add-user-form').reset();
+  } else alert('Please fill in all fields.');
+}
+
+function saveEditedUser() {
+  const name = document.getElementById('edit-user-name').value;
+  const email = document.getElementById('edit-user-email').value;
+  const phone = document.getElementById('edit-user-phone').value;
+  const role = document.getElementById('edit-user-role').value;
+  const status = document.getElementById('edit-user-status').value;
+  if (name && email && phone && role && status) {
+    usersData[currentEditIndex] = { name, email, phone, role, status };
+    renderUsers(); closeUserModal();
+  } else alert('Please fill in all fields.');
+}
+
+function deleteUser(index) { if (confirm("Delete this user?")) { usersData.splice(index, 1); renderUsers(); } }
+function toggleStatus(index) { usersData[index].status = usersData[index].status === 'active' ? 'inactive' : 'active'; renderUsers(); }
+function filterUsers() {
+  const role = document.getElementById('filter-role').value;
+  renderUsers(role === 'all' ? usersData : usersData.filter(u => u.role === role));
+}
+
+function renderUsers(data = usersData) {
+  const tableBody = document.getElementById('users-table-body');
+  const cardContainer = document.getElementById('users-card-container');
+  tableBody.innerHTML = ''; cardContainer.innerHTML = '';
+
+  data.forEach((user, index) => {
+    tableBody.innerHTML += `<tr>
+      <td>${user.name}</td><td>${user.email}</td><td>${user.phone}</td><td>${user.role}</td>
+      <td class="${user.status === 'active' ? 'active-status' : 'inactive-status'}">${user.status}</td>
+      <td>
+        <button class="btn btn-warning" onclick="openEditUserModal(${index})"><i class="bi bi-pencil"></i> Edit</button>
+        <button class="btn btn-danger" onclick="deleteUser(${index})"><i class="bi bi-trash"></i> Delete</button>
+        <button class="btn btn-info" onclick="toggleStatus(${index})">${user.status === 'active' ? 'Deactivate' : 'Activate'}</button>
+      </td>
+    </tr>`;
+
+    cardContainer.innerHTML += `<div class="card">
+      <p><strong>Name:</strong> ${user.name}</p>
+      <p><strong>Email:</strong> ${user.email}</p>
+      <p><strong>Phone:</strong> ${user.phone}</p>
+      <p><strong>Role:</strong> ${user.role}</p>
+      <p><strong>Status:</strong> <span class="${user.status === 'active' ? 'active-status' : 'inactive-status'}">${user.status}</span></p>
+      <div class="item-actions">
+        <button class="btn btn-warning" onclick="openEditUserModal(${index})"><i class="bi bi-pencil"></i> Edit</button>
+        <button class="btn btn-danger" onclick="deleteUser(${index})"><i class="bi bi-trash"></i> Delete</button>
+        <button class="btn btn-info" onclick="toggleStatus(${index})">${user.status === 'active' ? 'Deactivate' : 'Activate'}</button>
+      </div>
+    </div>`;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderUsers();
+  document.querySelector('.burger-menu').addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
+  setInterval(() => document.getElementById('current-time').textContent = new Date().toLocaleTimeString(), 1000);
+});
+
+document.addEventListener('keydown', function(event) {
+  if (event.key === "Escape") {
+    closeUserModal();
+  }
+});
+
+</script>
+
+</body>
+</html>

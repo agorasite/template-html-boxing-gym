@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Payments</title>
+    <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container-fluid {
+            display: flex;
+            width: 100%;
+        }
+        header {
+            background: #800000;
+            color: #fff;
+            /* text-align: center; */
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+        .header-left {
+            flex: 1;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        nav {
+            width: 200px;
+            background: #a52a2a;
+            color: #fff;
+            position: fixed;
+            top: 50px;
+            left: 0;
+            height: calc(100vh - 50px);
+            overflow-y: auto;
+            z-index: 1100;
+        }        
+        .burger-menu {
+            display: none;
+        }
+        
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav ul li a {
+            display: block;
+            padding: 15px 20px;
+            color: #fff;
+            text-decoration: none;
+            border-bottom: 1px solid #800000;
+            box-sizing: border-box;
+        }
+        nav ul li a:hover, nav ul li a.active {
+            background: #800000;
+            font-weight: bold;
+        }
+        .content {
+            margin-left: 200px;
+            margin-top: 50px;
+            padding: 20px;
+            width: calc(100% - 200px);
+            box-sizing: border-box;
+        }
+        .content section {
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        textarea, input[type="text"], input[type="number"], input[type="date"], select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin-bottom: 15px;
+            width: calc(33% - 20px);
+            box-sizing: border-box;
+        }
+        .card h3 {
+            margin-top: 0;
+        }
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .item-actions button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 5px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
+        #student-search {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        #student-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            display: block !important;
+        }
+        #student-list li {
+            padding: 8px;
+            cursor: pointer;
+        }
+        #student-list li:hover {
+            background-color: #f0f0f0;
+        }
+        @media screen and (max-width: 768px) {
+            .burger-menu {
+                display: block;
+                position: relative; /* change from fixed */
+                top: auto;
+                left: auto;
+                background: transparent; /* remove background if not needed */
+                color: white;
+                padding: 0 10px 0 0; /* adjust spacing */
+                cursor: pointer;
+            }
+            header {
+                justify-content: space-between;
+            }
+            nav {
+                width: 0;
+                transition: width 0.3s;
+                overflow: hidden;
+            }
+            nav.open {
+                width: 200px;
+            }
+            .content {
+                margin-left: 0;
+                width: 100%;
+            }
+            .card {
+                width: 100% !important;
+            }
+        }
+         /* Sidebar links – default text colour */
+        #sidebar .nav-link {
+            color: #ffffff !important;    /* white */
+        }
+        /* Hover / focus state */
+        #sidebar .nav-link:hover,
+        #sidebar .nav-link:focus {
+            color: #0d6efd !important;    /* Bootstrap-blue */
+            background-color: transparent;/* keep the red background you already set */
+        }
+        /* Optional: keep the active item blue too */
+        #sidebar .nav-link.active {
+            color: #0d6efd !important;
+            font-weight: bold;            /* you already had this */
+        }
+
+        /* Custom styles for paid/unpaid cards */
+        #paid-payments-container .card {
+            border-left: 5px solid #28a745; /* Green */
+        }
+        #unpaid-payments-container .card {
+            border-left: 5px solid #dc3545; /* Red */
+        }
+        #current-time {
+            white-space: nowrap;
+        }
+
+    </style>
+</head>
+<body>    
+    <header>
+        <div class="burger-menu">☰</div>
+        <div class="header-left">
+            <h1 style="margin: 0; font-size: 24px;">Payments</h1>
+        </div>
+        <div class="header-right">
+            <div id="current-time"></div>
+            <select id="language-select" class="form-select">
+                <option value="en">English</option>
+                <option value="gr">Greek</option>
+            </select>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <nav id="sidebar">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html"><i class="bi bi-house-door"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="classes.html"><i class="bi bi-people"></i> Classes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="about.html"><i class="bi bi-info-circle"></i> About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="pricing.html"><i class="bi bi-tag"></i> Pricing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="appointments.html"><i class="bi bi-calendar-check"></i> Appointments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="users.html"><i class="bi bi-people"></i> Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="payments.html"><i class="bi bi-credit-card"></i> Payments</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section>
+                <h2><i class="bi bi-x-circle"></i> Students Who Need to Pay</h2>
+                <input type="text" id="search-unpaid" class="form-control mb-3" placeholder="Search Unpaid Students..." onkeyup="filterPayments()">
+                <div class="card-container" id="unpaid-payments-container">
+                    <!-- Unpaid payment cards will be inserted here -->
+                </div>
+            </section>
+            <section>
+                <h2><i class="bi bi-check-circle"></i> Students Who Paid</h2>
+                <input type="text" id="search-paid" class="form-control mb-3" placeholder="Search Paid Students..." onkeyup="filterPayments()">
+                <div class="card-container" id="paid-payments-container">
+                    <!-- Paid payment cards will be inserted here -->
+                </div>
+            </section>
+
+
+
+            <button type="button" class="btn btn-success" onclick="openPaymentModal()"><i class="bi bi-plus"></i> Add New Payment</button>
+        </div>
+    </div>
+
+    <!-- Modal for adding/editing payments -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePaymentModal()">&times;</span>
+            <h2 id="paymentModalTitle"><i class="bi bi-credit-card"></i> Add Payment</h2>
+            <form id="paymentForm">
+                <div class="mb-3">
+                    <label for="student-search" class="form-label"><i class="bi bi-search"></i> Search Student:</label>
+                    <input type="text" class="form-control" id="student-search" placeholder="Search for a student..." oninput="searchStudents()">
+                    <ul id="student-list" class="list-group">
+                        <!-- Student list will be populated here -->
+                    </ul>
+                </div>
+                <div class="mb-3">
+                    <label for="amount" class="form-label"><i class="bi bi-currency-dollar"></i> Amount:</label>
+                    <input type="number" class="form-control" id="amount" name="amount" required>
+                </div>
+                <div class="mb-3">
+                    <label for="date" class="form-label"><i class="bi bi-calendar"></i> Date:</label>
+                    <input type="date" class="form-control" id="date" name="date" required>
+                </div>
+                <div class="mb-3">
+                    <label for="status" class="form-label"><i class="bi bi-check-circle"></i> Status:</label>
+                    <select class="form-select" id="status" name="status" required>
+                        <option value="Paid">Paid</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Failed">Failed</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="savePayment()"><i class="bi bi-save"></i> Save Payment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap @5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Sample data for payments
+        let payments = [
+            { studentName: "John Doe", amount: 100, date: "2023-10-01", status: "Paid" },
+            { studentName: "Themhz Doe", amount: 100, date: "2023-10-01", status: "Paid" },
+            { studentName: "John Doe", amount: 100, date: "2023-10-01", status: "Paid" },
+            { studentName: "Jane Smith", amount: 150, date: "2023-10-02", status: "Pending" },
+            { studentName: "Alice Johnson", amount: 100, date: "2023-10-03", status: "Paid" },
+            { studentName: "Bob Brown", amount: 120, date: "2023-10-04", status: "Failed" }
+        ];
+
+        let students = [
+            { name: "John Doe" },
+            { name: "Jane Smith" },
+            { name: "Alice Johnson" },
+            { name: "Bob Brown" }
+        ];
+
+        let currentEditIndex = -1;
+        let selectedStudent = null;
+
+        
+        function renderPayments() {
+            const paidContainer = document.getElementById("paid-payments-container");
+            const unpaidContainer = document.getElementById("unpaid-payments-container");
+
+            paidContainer.innerHTML = "";
+            unpaidContainer.innerHTML = "";
+
+            payments.forEach((payment, index) => {
+                const card = document.createElement("div");
+                card.className = "card";
+
+                card.innerHTML = `
+                    <h3>${payment.studentName}</h3>
+                    <p><strong>Amount:</strong> $${payment.amount}</p>
+                    <p><strong>Date:</strong> ${payment.date}</p>
+                    <p><strong>Status:</strong> ${payment.status}</p>
+                    <div class="item-actions">
+                        <button type="button" class="btn btn-warning" onclick="openPaymentModal(${index})"><i class="bi bi-pencil"></i> Edit</button>
+                        <button type="button" class="btn btn-danger" onclick="deletePayment(${index})"><i class="bi bi-trash"></i> Delete</button>
+                    </div>
+                `;
+
+                if (payment.status === "Paid") {
+                    paidContainer.appendChild(card);
+                } else {
+                    unpaidContainer.appendChild(card);
+                }
+            });
+
+            // Show all initially
+            document.querySelectorAll(".card").forEach(card => card.style.display = "");
+        }
+
+        function filterPayments() {
+            const searchPaid = document.getElementById("search-paid").value.toLowerCase();
+            const searchUnpaid = document.getElementById("search-unpaid").value.toLowerCase();
+
+            document.querySelectorAll("#paid-payments-container .card").forEach(card => {
+                const name = card.querySelector("h3").textContent.toLowerCase();
+                card.style.display = name.includes(searchPaid) ? "block" : "none";
+            });
+
+            document.querySelectorAll("#unpaid-payments-container .card").forEach(card => {
+                const name = card.querySelector("h3").textContent.toLowerCase();
+                card.style.display = name.includes(searchUnpaid) ? "block" : "none";
+            });
+        }
+
+        function populateStudentList(studentList) {
+            const list = document.getElementById("student-list");
+            list.innerHTML = "";
+            studentList.forEach(student => {
+                const item = document.createElement("li");
+                item.className = "list-group-item";
+                item.textContent = student.name;
+                item.onclick = function () {
+                    document.getElementById("student-search").value = student.name;
+                    selectedStudent = student.name;
+                };
+                list.appendChild(item);
+            });
+        }
+
+        function searchStudents() {
+            const searchTerm = document.getElementById("student-search").value.toLowerCase();
+            if (searchTerm === "") {
+                populateStudentList(students);
+            } else {
+                const filteredStudents = students.filter(student =>
+                    student.name.toLowerCase().includes(searchTerm)
+                );
+                populateStudentList(filteredStudents);
+            }
+        }
+
+        function openPaymentModal(index = -1) {
+            currentEditIndex = index;
+            const modal = document.getElementById("paymentModal");
+            const form = document.getElementById("paymentForm");
+            if (index === -1) {
+                document.getElementById("paymentModalTitle").textContent = "Add Payment";
+                form.reset();
+                selectedStudent = null;
+            } else {
+                document.getElementById("paymentModalTitle").textContent = "Edit Payment";
+                const payment = payments[index];
+                document.getElementById("student-search").value = payment.studentName;
+                document.getElementById("amount").value = payment.amount;
+                document.getElementById("date").value = payment.date;
+                document.getElementById("status").value = payment.status;
+                selectedStudent = payment.studentName;
+            }
+            modal.style.display = "block";
+            populateStudentList(students);
+        }
+
+        function closePaymentModal() {
+            document.getElementById("paymentModal").style.display = "none";
+        }
+
+        function savePayment() {
+            const amount = document.getElementById("amount").value;
+            const date = document.getElementById("date").value;
+            const status = document.getElementById("status").value;
+            if (!selectedStudent) {
+                alert("Please select a student.");
+                return;
+            }
+            const newPayment = { studentName: selectedStudent, amount, date, status };
+            if (currentEditIndex === -1) {
+                payments.push(newPayment);
+            } else {
+                payments[currentEditIndex] = newPayment;
+            }
+            closePaymentModal();
+            renderPayments();
+        }
+
+        function deletePayment(index) {
+            if (confirm("Are you sure you want to delete this payment?")) {
+                payments.splice(index, 1);
+                renderPayments();
+            }
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById("paymentModal");
+            if (event.target == modal) {
+                closePaymentModal();
+            }
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        document.getElementById('language-select').addEventListener('change', function () {
+            const selectedLanguage = this.value;
+            alert('Language changed to ' + selectedLanguage);
+        });
+
+        document.querySelector('.burger-menu').addEventListener('click', function () {
+            var sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        });
+
+           // Close modal when pressing ESC key
+            document.addEventListener('keydown', function(event) {
+                const modal = document.getElementById("paymentModal");
+                if (event.key === "Escape" && modal.style.display === "block") {
+                    closePaymentModal();
+                }
+            });
+
+        // Initial render
+        renderPayments();
+    </script>
+</body>
+</html>

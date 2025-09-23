@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container-fluid {
+            display: flex;
+            width: 100%;
+        }
+        header {
+            background: #800000;
+            color: #fff;
+            /* text-align: center; */
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+        .header-left {
+            flex: 1;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        nav {
+            width: 200px;
+            background: #a52a2a;
+            color: #fff;
+            position: fixed;
+            top: 50px;
+            left: 0;
+            height: calc(100vh - 50px);
+            overflow-y: auto;
+        }
+        .burger-menu {
+            display: none;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav ul li a {
+            display: block;
+            padding: 15px 20px;
+            color: #fff;
+            text-decoration: none;
+            border-bottom: 1px solid #800000;
+            box-sizing: border-box;
+        }
+        nav ul li a:hover, nav ul li a.active {
+            background: #800000;
+            font-weight: bold;
+        }
+        .content {
+            margin-left: 200px;
+            margin-top: 50px;
+            padding: 20px;
+            width: calc(100% - 200px);
+            box-sizing: border-box;
+        }
+        .content section {
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        select {
+            padding: 5px;
+        }
+        .carousel-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .carousel-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .carousel-actions button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .preview {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 5px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
+        @media screen and (max-width: 768px) {
+             .burger-menu {
+                display: block;
+                position: relative; /* change from fixed */
+                top: auto;
+                left: auto;
+                background: transparent; /* remove background if not needed */
+                color: white;
+                padding: 0 10px 0 0; /* adjust spacing */
+                cursor: pointer;
+            }
+            header {
+                justify-content: space-between;
+            }
+            nav {
+                width: 0;
+                transition: width 0.3s;
+                overflow: hidden;
+            }
+            nav.open {
+                width: 200px;
+            }
+            .content {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+
+         /* Sidebar links – default text colour */
+        #sidebar .nav-link {
+            color: #ffffff !important;    /* white */
+        }
+
+        /* Hover / focus state */
+        #sidebar .nav-link:hover,
+        #sidebar .nav-link:focus {
+            color: #0d6efd !important;    /* Bootstrap-blue */
+            background-color: transparent;/* keep the red background you already set */
+        }
+
+        /* Optional: keep the active item blue too */
+        #sidebar .nav-link.active {
+            color: #0d6efd !important;
+            font-weight: bold;            /* you already had this */
+        }
+        #current-time {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>    
+    <header>
+        <div class="burger-menu">☰</div>
+        <div class="header-left">
+            <h1 style="margin: 0; font-size: 24px;">Home</h1>
+        </div>
+        <div class="header-right">
+            <div id="current-time"></div>
+            <select id="language-select" class="form-select">
+                <option value="en">English</option>
+                <option value="gr">Greek</option>
+            </select>
+        </div>
+    </header>
+    <div class="container-fluid">
+        <nav id="sidebar">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html"><i class="bi bi-house-door"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="classes.html"><i class="bi bi-people"></i> Classes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="about.html"><i class="bi bi-info-circle"></i> About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="pricing.html"><i class="bi bi-tag"></i> Pricing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="appointments.html"><i class="bi bi-calendar-check"></i> Appointments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="users.html"><i class="bi bi-people"></i> Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="payments.html"><i class="bi bi-credit-card"></i> Payments</a>
+                </li>
+            </ul>
+        </nav>
+        <div class="content">
+            <section>
+                <h2><i class="bi bi-pencil-square"></i> Manage Hero Section</h2>
+                <form action="/update_hero" method="post">
+                    <div class="mb-3">
+                        <label for="headline" class="form-label"><i class="bi bi-type-h1"></i> Headline:</label>
+                        <input type="text" class="form-control" id="headline" name="headline" value="Welcome to IronFist Gym">
+                    </div>
+                    <div class="mb-3">
+                        <label for="subtext" class="form-label"><i class="bi bi-text-paragraph"></i> Subtext:</label>
+                        <textarea class="form-control" id="subtext" name="subtext">Train your body and mind with top-tier martial arts coaching.</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cta_text" class="form-label"><i class="bi bi-type-bold"></i> CTA Text:</label>
+                        <input type="text" class="form-control" id="cta_text" name="cta_text" value="Join a Class">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cta_link" class="form-label"><i class="bi bi-link-45deg"></i> CTA Link:</label>
+                        <input type="text" class="form-control" id="cta_link" name="cta_link" value="classes.html">
+                    </div>
+                    <div class="mb-3">
+                        <label for="alt_text" class="form-label"><i class="bi bi-type-italic"></i> Alternative Text:</label>
+                        <input type="text" class="form-control" id="alt_text" name="alt_text" value="Book Free Trial">
+                    </div>
+                    <div class="mb-3">
+                        <label for="alt_link" class="form-label"><i class="bi bi-link"></i> Alternative Link:</label>
+                        <input type="text" class="form-control" id="alt_link" name="alt_link" value="appointment.html">
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Update</button>
+                </form>
+            </section>
+            <section>
+                <h2><i class="bi bi-images"></i> Manage Carousel</h2>
+                <button type="button" class="btn btn-primary" onclick="openCarouselModal()"><i class="bi bi-plus"></i> Add Carousel</button>
+                <div id="carousel-items">
+                    <!-- Carousel items will be added here -->
+                </div>
+            </section>
+            <section>
+                <h2><i class="bi bi-info-square"></i> Manage About Section</h2>
+                <form action="/update_about" method="post">
+                    <div class="mb-3">
+                        <label for="about_title" class="form-label"><i class="bi bi-type-h1"></i> Title:</label>
+                        <input type="text" class="form-control" id="about_title" name="about_title" value="About Our Gym">
+                    </div>
+                    <div class="mb-3">
+                        <label for="about_description" class="form-label"><i class="bi bi-text-paragraph"></i> Description:</label>
+                        <textarea class="form-control" id="about_description" name="about_description">At IronFist Gym, we help you achieve your fitness and martial arts goals. Our instructors and community make it the perfect place to grow.</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="about_button_text" class="form-label"><i class="bi bi-type-bold"></i> Button Text:</label>
+                        <input type="text" class="form-control" id="about_button_text" name="about_button_text" value="Learn More">
+                    </div>
+                    <div class="mb-3">
+                        <label for="about_button_link" class="form-label"><i class="bi bi-link-45deg"></i> Button Link:</label>
+                        <input type="text" class="form-control" id="about_button_link" name="about_button_link" value="about.html">
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Update</button>
+                </form>
+            </section>
+            <section style="height: 1000px;">
+                <h2>Additional Content</h2>
+                <p>Scroll down to see the menu behavior.</p>
+            </section>
+        </div>
+    </div>
+
+    <!-- Modal for Carousel -->
+    <div id="carouselModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('carouselModal')">&times;</span>
+            <h2 id="carouselModalTitle">Add Carousel</h2>
+            <form id="carouselForm">
+                <div class="mb-3">
+                    <label for="carousel-video-url" class="form-label"><i class="bi bi-film"></i> Video URL:</label>
+                    <input type="text" class="form-control" id="carousel-video-url" name="video-url" placeholder="Enter video URL">
+                </div>
+                <div class="mb-3">
+                    <label for="carousel-title" class="form-label"><i class="bi bi-type-h1"></i> Title:</label>
+                    <input type="text" class="form-control" id="carousel-title" name="title" placeholder="Enter title">
+                </div>
+                <div class="mb-3">
+                    <label for="carousel-description" class="form-label"><i class="bi bi-text-paragraph"></i> Description:</label>
+                    <textarea class="form-control" id="carousel-description" name="description" placeholder="Enter description"></textarea>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="saveCarousel()"><i class="bi bi-save"></i> Save</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.querySelector('.burger-menu').addEventListener('click', function() {
+            var sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        });
+
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        document.getElementById('language-select').addEventListener('change', function() {
+            const selectedLanguage = this.value;
+            alert('Language changed to ' + selectedLanguage);
+        });
+
+        // Highlight the current nav item
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('nav ul li a');
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Initialize with existing carousel items
+        let carousels = [
+            {
+                videoUrl: "/templates/boxinggym/boxinggym1/assets/video/video1.mp4",
+                title: "Boxing Classes",
+                description: "Train like a champion with our boxing classes."
+            },
+            {
+                videoUrl: "/templates/boxinggym/boxinggym1/assets/video/video2.mp4",
+                title: "Muay Thai Training",
+                description: "Master the art of striking with our Muay Thai training."
+            }
+        ];
+
+        let currentEditIndex = -1;
+
+        function renderCarousels() {
+            const carouselItemsContainer = document.getElementById('carousel-items');
+            carouselItemsContainer.innerHTML = '';
+
+            carousels.forEach((carousel, index) => {
+                const carouselItem = document.createElement('div');
+                carouselItem.className = 'carousel-item';
+                carouselItem.innerHTML = `
+                    <h3>${carousel.title}</h3>
+                    <p>${carousel.description}</p>
+                    <div class="carousel-actions">
+                        <button type="button" class="btn btn-warning" onclick="openCarouselModal(${index})"><i class="bi bi-pencil"></i> Edit</button>
+                        <button type="button" class="btn btn-danger" onclick="deleteCarousel(${index})"><i class="bi bi-trash"></i> Delete</button>
+                        <button type="button" class="btn btn-info" onclick="previewCarousel(${index})"><i class="bi bi-eye"></i> Preview</button>
+                    </div>
+                    <div id="preview-${index}" class="preview" style="display: none;">
+                        <video width="100%" controls>
+                            <source src="${carousel.videoUrl}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                `;
+                carouselItemsContainer.appendChild(carouselItem);
+            });
+        }
+
+        function openCarouselModal(index = -1) {
+            const modal = document.getElementById('carouselModal');
+            const form = document.getElementById('carouselForm');
+            currentEditIndex = index;
+
+            if (index === -1) {
+                document.getElementById('carouselModalTitle').textContent = 'Add Carousel';
+                form.reset();
+            } else {
+                document.getElementById('carouselModalTitle').textContent = 'Edit Carousel';
+                const carousel = carousels[index];
+                document.getElementById('carousel-video-url').value = carousel.videoUrl;
+                document.getElementById('carousel-title').value = carousel.title;
+                document.getElementById('carousel-description').value = carousel.description;
+            }
+            modal.style.display = 'block';
+        }
+
+        function saveCarousel() {
+            const videoUrl = document.getElementById('carousel-video-url').value;
+            const title = document.getElementById('carousel-title').value;
+            const description = document.getElementById('carousel-description').value;
+
+            const newCarousel = { videoUrl, title, description };
+
+            if (currentEditIndex === -1) {
+                carousels.push(newCarousel);
+            } else {
+                carousels[currentEditIndex] = newCarousel;
+            }
+
+            closeModal('carouselModal');
+            renderCarousels();
+        }
+
+        function deleteCarousel(index) {
+            carousels.splice(index, 1);
+            renderCarousels();
+        }
+
+        function previewCarousel(index) {
+            const preview = document.getElementById(`preview-${index}`);
+            preview.style.display = preview.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            currentEditIndex = -1;
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            
+            const modal = document.getElementById('carouselModal');
+            if (event.target == modal) {
+                closeModal('carouselModal');
+            }
+        }
+
+           // Close modal when pressing ESC key
+        document.addEventListener('keydown', function(event) {
+            const modal = document.getElementById("carouselModal");
+            if (event.key === "Escape" && modal.style.display === "block") {
+                closeModal('carouselModal');
+            }
+        });
+
+        // Render existing carousels on page load
+        renderCarousels();
+    </script>
+</body>
+</html>

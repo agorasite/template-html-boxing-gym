@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Pricing</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container-fluid {
+            display: flex;
+            width: 100%;
+        }
+        header {
+            background: #800000;
+            color: #fff;
+            /* text-align: center; */
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+        .header-left {
+            flex: 1;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        nav {
+            width: 200px;
+            background: #a52a2a;
+            color: #fff;
+            position: fixed;
+            top: 50px;
+            left: 0;
+            height: calc(100vh - 50px);
+            overflow-y: auto;
+        }
+        .burger-menu {
+            display: none;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav ul li a {
+            display: block;
+            padding: 15px 20px;
+            color: #fff;
+            text-decoration: none;
+            border-bottom: 1px solid #800000;
+            box-sizing: border-box;
+        }
+        nav ul li a:hover, nav ul li a.active {
+            background: #800000;
+            font-weight: bold;
+        }
+        .content {
+            margin-left: 200px;
+            margin-top: 50px;
+            padding: 20px;
+            width: calc(100% - 200px);
+            box-sizing: border-box;
+        }
+        .content section {
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        select {
+            padding: 5px;
+        }
+        .item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .item-actions button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 5px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
+        @media screen and (max-width: 768px) {
+            .burger-menu {
+                display: block;
+                position: relative; /* change from fixed */
+                top: auto;
+                left: auto;
+                background: transparent; /* remove background if not needed */
+                color: white;
+                padding: 0 10px 0 0; /* adjust spacing */
+                cursor: pointer;
+            }
+            header {
+                justify-content: space-between;
+            }
+            nav {
+                width: 0;
+                transition: width 0.3s;
+                overflow: hidden;
+            }
+            nav.open {
+                width: 200px;
+            }
+            .content {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+         /* Sidebar links – default text co lour */
+        #sidebar .nav-link {
+            color: #ffffff !important;    /* white */
+        }
+
+        /* Hover / focus state */
+        #sidebar .nav-link:hover,
+        #sidebar .nav-link:focus {
+            color: #0d6efd !important;    /* Bootstrap-blue */
+            background-color: transparent;/* keep the red background you already set */
+        }
+
+        /* Optional: keep the active item blue too */
+        #sidebar .nav-link.active {
+            color: #0d6efd !important;
+            font-weight: bold;            /* you already had this */
+        }
+        #current-time {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>    
+    <header>
+        <div class="burger-menu">☰</div>
+        <div class="header-left">
+            <h1 style="margin: 0; font-size: 24px;">Pricing</h1>
+        </div>
+        <div class="header-right">
+            <div id="current-time"></div>
+            <select id="language-select" class="form-select">
+                <option value="en">English</option>
+                <option value="gr">Greek</option>
+            </select>
+        </div>
+    </header>
+    <div class="container-fluid">
+        <nav id="sidebar">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html"><i class="bi bi-house-door"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="classes.html"><i class="bi bi-people"></i> Classes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="about.html"><i class="bi bi-info-circle"></i> About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="pricing.html"><i class="bi bi-tag"></i> Pricing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="appointments.html"><i class="bi bi-calendar-check"></i> Appointments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="users.html"><i class="bi bi-people"></i> Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="payments.html"><i class="bi bi-credit-card"></i> Payments</a>
+                </li>
+            </ul>
+        </nav>
+        <div class="content">
+            <section>
+                <h2><i class="bi bi-pencil-square"></i> Edit Hero Section</h2>
+                <form id="edit-hero">
+                    <div class="mb-3">
+                        <label for="hero-title" class="form-label"><i class="bi bi-type-h1"></i> Title:</label>
+                        <input type="text" class="form-control" id="hero-title" name="title" value="Membership Plans">
+                    </div>
+                    <div class="mb-3">
+                        <label for="hero-subtitle" class="form-label"><i class="bi bi-text-paragraph"></i> Subtitle:</label>
+                        <input type="text" class="form-control" id="hero-subtitle" name="subtitle" value="Choose the plan that fits your goals and budget.">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="updateHero()"><i class="bi bi-save"></i> Update Hero</button>
+                </form>
+            </section>
+            <section>
+                <h2><i class="bi bi-card-list"></i> Manage Membership Plans</h2>
+                <form id="edit-plans">
+                    <div id="plan-items"></div>
+                    <button type="button" class="btn btn-primary" onclick="openPlanModal()"><i class="bi bi-plus"></i> Add Plan</button>
+                </form>
+            </section>
+            <section>
+                <h2><i class="bi bi-tag"></i> Manage Special Offers</h2>
+                <form id="edit-offers">
+                    <div id="offer-items"></div>
+                    <button type="button" class="btn btn-primary" onclick="openOfferModal()"><i class="bi bi-plus"></i> Add Offer</button>
+                </form>
+            </section>
+            <section>
+                <h2><i class="bi bi-megaphone"></i> Edit Call-to-Action (CTA) Section</h2>
+                <form id="edit-cta">
+                    <div class="mb-3">
+                        <label for="cta-title" class="form-label"><i class="bi bi-type-h1"></i> Title:</label>
+                        <input type="text" class="form-control" id="cta-title" name="title" value="Ready to Join?">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cta-subtitle" class="form-label"><i class="bi bi-text-paragraph"></i> Subtitle:</label>
+                        <input type="text" class="form-control" id="cta-subtitle" name="subtitle" value="Sign up for a free trial class today and experience the [Your Gym Name] difference.">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="updateCTA()"><i class="bi bi-save"></i> Update CTA</button>
+                </form>
+            </section>
+        </div>
+    </div>
+
+    <!-- Modal for Plan -->
+    <div id="planModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('planModal')">&times;</span>
+            <h2 id="planModalTitle">Add Plan</h2>
+            <form id="planForm">
+                <div class="mb-3">
+                    <label for="plan-name" class="form-label">Name:</label>
+                    <input type="text" class="form-control" id="plan-name" name="name">
+                </div>
+                <div class="mb-3">
+                    <label for="plan-price" class="form-label">Price:</label>
+                    <input type="text" class="form-control" id="plan-price" name="price">
+                </div>
+                <div class="mb-3">
+                    <label for="plan-features" class="form-label">Features (comma-separated):</label>
+                    <input type="text" class="form-control" id="plan-features" name="features">
+                </div>
+                <button type="button" class="btn btn-primary" onclick="savePlan()">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Offer -->
+    <div id="offerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('offerModal')">&times;</span>
+            <h2 id="offerModalTitle">Add Offer</h2>
+            <form id="offerForm">
+                <div class="mb-3">
+                    <label for="offer-title" class="form-label">Title:</label>
+                    <input type="text" class="form-control" id="offer-title" name="title">
+                </div>
+                <div class="mb-3">
+                    <label for="offer-description" class="form-label">Description:</label>
+                    <textarea class="form-control" id="offer-description" name="description"></textarea>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="saveOffer()">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Sample initial data
+        let pricingData = {
+            "hero": {
+                "title": "Membership Plans",
+                "subtitle": "Choose the plan that fits your goals and budget."
+            },
+            "plans": [
+                {
+                    "name": "Basic Plan",
+                    "price": "$50.00/month",
+                    "features": [
+                        "Access to 1 class per week",
+                        "Open gym hours",
+                        "Locker access."
+                    ]
+                },
+                {
+                    "name": "Standard Plan",
+                    "price": "$80.00/month",
+                    "features": [
+                        "Access to 3 classes per week",
+                        "Open gym hours",
+                        "Locker access",
+                        "Free gym T-shirt."
+                    ]
+                },
+                {
+                    "name": "Premium Plan",
+                    "price": "$120.00/month",
+                    "features": [
+                        "Unlimited classes",
+                        "Open gym hours",
+                        "Locker access",
+                        "Free T-shirt",
+                        "Plus one personal training session per month."
+                    ]
+                },
+                {
+                    "name": "Annual Membership",
+                    "price": "$499.99/year",
+                    "features": [
+                        "Full-year access to all classes with a discount."
+                    ]
+                }
+            ],
+            "offers": [
+                {
+                    "title": "Student Discount",
+                    "description": "Get 10% off any membership plan with a valid student ID."
+                },
+                {
+                    "title": "Family Plan",
+                    "description": "Sign up with a family member and each get 15% off your membership."
+                },
+                {
+                    "title": "Premium Early Bird",
+                    "description": "Save $20 when you pre-pay your Premium Plan before next month."
+                }
+            ],
+            "cta": {
+                "title": "Ready to Join?",
+                "subtitle": "Sign up for a free trial class today and experience the [Your Gym Name] difference."
+            }
+        };
+
+        let currentEditIndex = -1;
+        let currentEditType = '';
+
+        // Render the plans and offers on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            renderPlanItems();
+            renderOfferItems();
+            document.querySelector('.burger-menu').addEventListener('click', function() {
+                var sidebar = document.getElementById('sidebar');
+                sidebar.classList.toggle('open');
+            });
+
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            document.getElementById('language-select').addEventListener('change', function() {
+                const selectedLanguage = this.value;
+                alert('Language changed to ' + selectedLanguage);
+            });
+
+            // Highlight the current nav item
+            const currentPage = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('nav ul li a');
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        // Function to update hero section
+        function updateHero() {
+            pricingData.hero.title = document.getElementById('hero-title').value;
+            pricingData.hero.subtitle = document.getElementById('hero-subtitle').value;
+            alert('Hero section updated');
+        }
+
+        // Function to update CTA section
+        function updateCTA() {
+            pricingData.cta.title = document.getElementById('cta-title').value;
+            pricingData.cta.subtitle = document.getElementById('cta-subtitle').value;
+            alert('CTA section updated');
+        }
+
+        // Functions to manage plans
+        function renderPlanItems() {
+            const container = document.getElementById('plan-items');
+            container.innerHTML = '';
+            pricingData.plans.forEach((plan, index) => {
+                const planDiv = document.createElement('div');
+                planDiv.className = 'item';
+                planDiv.innerHTML = `
+                    <h3>${plan.name}</h3>
+                    <p><strong>Price:</strong> ${plan.price}</p>
+                    <p><strong>Features:</strong> ${plan.features.join(', ')}</p>
+                    <div class="item-actions">
+                        <button type="button" class="btn btn-warning" onclick="openPlanModal(${index})"><i class="bi bi-pencil"></i> Edit</button>
+                        <button type="button" class="btn btn-danger" onclick="deletePlan(${index})"><i class="bi bi-trash"></i> Delete</button>
+                    </div>
+                `;
+                container.appendChild(planDiv);
+            });
+        }
+
+        function openPlanModal(index = -1) {
+            currentEditIndex = index;
+            currentEditType = 'plan';
+            const modal = document.getElementById('planModal');
+            const form = document.getElementById('planForm');
+            if (index === -1) {
+                document.getElementById('planModalTitle').textContent = 'Add Plan';
+                form.reset();
+            } else {
+                document.getElementById('planModalTitle').textContent = 'Edit Plan';
+                const plan = pricingData.plans[index];
+                document.getElementById('plan-name').value = plan.name;
+                document.getElementById('plan-price').value = plan.price;
+                document.getElementById('plan-features').value = plan.features.join(', ');
+            }
+            modal.style.display = 'block';
+        }
+
+        function savePlan() {
+            const name = document.getElementById('plan-name').value;
+            const price = document.getElementById('plan-price').value;
+            const features = document.getElementById('plan-features').value.split(',').map(feature => feature.trim());
+
+            const newPlan = { name, price, features };
+
+            if (currentEditIndex === -1) {
+                pricingData.plans.push(newPlan);
+            } else {
+                pricingData.plans[currentEditIndex] = newPlan;
+            }
+
+            closeModal('planModal');
+            renderPlanItems();
+        }
+
+        function deletePlan(index) {
+            pricingData.plans.splice(index, 1);
+            renderPlanItems();
+        }
+
+        // Functions to manage offers
+        function renderOfferItems() {
+            const container = document.getElementById('offer-items');
+            container.innerHTML = '';
+            pricingData.offers.forEach((offer, index) => {
+                const offerDiv = document.createElement('div');
+                offerDiv.className = 'item';
+                offerDiv.innerHTML = `
+                    <h3>${offer.title}</h3>
+                    <p>${offer.description}</p>
+                    <div class="item-actions">
+                        <button type="button" class="btn btn-warning" onclick="openOfferModal(${index})"><i class="bi bi-pencil"></i> Edit</button>
+                        <button type="button" class="btn btn-danger" onclick="deleteOffer(${index})"><i class="bi bi-trash"></i> Delete</button>
+                    </div>
+                `;
+                container.appendChild(offerDiv);
+            });
+        }
+
+        function openOfferModal(index = -1) {
+            currentEditIndex = index;
+            currentEditType = 'offer';
+            const modal = document.getElementById('offerModal');
+            const form = document.getElementById('offerForm');
+            if (index === -1) {
+                document.getElementById('offerModalTitle').textContent = 'Add Offer';
+                form.reset();
+            } else {
+                document.getElementById('offerModalTitle').textContent = 'Edit Offer';
+                const offer = pricingData.offers[index];
+                document.getElementById('offer-title').value = offer.title;
+                document.getElementById('offer-description').value = offer.description;
+            }
+            modal.style.display = 'block';
+        }
+
+        function saveOffer() {
+            const title = document.getElementById('offer-title').value;
+            const description = document.getElementById('offer-description').value;
+
+            const newOffer = { title, description };
+
+            if (currentEditIndex === -1) {
+                pricingData.offers.push(newOffer);
+            } else {
+                pricingData.offers[currentEditIndex] = newOffer;
+            }
+
+            closeModal('offerModal');
+            renderOfferItems();
+        }
+
+        function deleteOffer(index) {
+            pricingData.offers.splice(index, 1);
+            renderOfferItems();
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            currentEditIndex = -1;
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const planModal = document.getElementById('planModal');
+            const offerModal = document.getElementById('offerModal');
+            if (event.target == planModal) {
+                closeModal('planModal');
+            }
+            if (event.target == offerModal) {
+                closeModal('offerModal');
+            }
+        }
+
+        // Close modal when pressing ESC key
+        document.addEventListener('keydown', function(event) {
+            const modal = document.getElementById("carouselModal");
+            if (event.key === "Escape") {
+                closeModal('planModal');
+                closeModal('offerModal');
+            }
+        });
+
+    </script>
+</body>
+</html>

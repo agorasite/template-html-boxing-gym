@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - About Us</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container-fluid {
+            display: flex;
+            width: 100%;
+        }
+        header {
+            background: #800000;
+            color: #fff;
+            /* text-align: center; */
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+        .header-left {
+            flex: 1;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        nav {
+            width: 200px;
+            background: #a52a2a;
+            color: #fff;
+            position: fixed;
+            top: 50px;
+            left: 0;
+            height: calc(100vh - 50px);
+            overflow-y: auto;
+        }
+        .burger-menu {
+            display: none;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav ul li a {
+            display: block;
+            padding: 15px 20px;
+            color: #fff;
+            text-decoration: none;
+            border-bottom: 1px solid #800000;
+            box-sizing: border-box;
+        }
+        nav ul li a:hover, nav ul li a.active {
+            background: #800000;
+            font-weight: bold;
+        }
+        .content {
+            margin-left: 200px;
+            margin-top: 50px;
+            padding: 20px;
+            width: calc(100% - 200px);
+            box-sizing: border-box;
+        }
+        .content section {
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        select {
+            padding: 5px;
+        }
+        .item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .item-actions button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            max-width: 500px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
+
+        @media screen and (max-width: 768px) {
+            .burger-menu {
+                display: block;
+                position: relative; /* change from fixed */
+                top: auto;
+                left: auto;
+                background: transparent; /* remove background if not needed */
+                color: white;
+                padding: 0 10px 0 0; /* adjust spacing */
+                cursor: pointer;
+            }
+            header {
+                justify-content: space-between;
+            }
+            nav {
+                width: 0;
+                transition: width 0.3s;
+                overflow: hidden;
+            }
+            nav.open {
+                width: 200px;
+            }
+            .content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .modal-content {
+                width: 95% !important;
+                margin: 20px auto !important;
+                border-radius: 0;
+            }
+
+        }
+
+         /* Sidebar links – default text colour */
+        #sidebar .nav-link {
+            color: #ffffff !important;    /* white */
+        }
+
+        /* Hover / focus state */
+        #sidebar .nav-link:hover,
+        #sidebar .nav-link:focus {
+            color: #0d6efd !important;    /* Bootstrap-blue */
+            background-color: transparent;/* keep the red background you already set */
+        }
+
+        /* Optional: keep the active item blue too */
+        #sidebar .nav-link.active {
+            color: #0d6efd !important;
+            font-weight: bold;            /* you already had this */
+        }
+        #current-time {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>    
+    <header>
+        <div class="burger-menu">☰</div>
+        <div class="header-left">
+            <h1 style="margin: 0; font-size: 24px;">About</h1>
+        </div>
+        <div class="header-right">
+            <div id="current-time"></div>
+            <select id="language-select" class="form-select">
+                <option value="en">English</option>
+                <option value="gr">Greek</option>
+            </select>
+        </div>
+    </header>
+    <div class="container-fluid">
+        <nav id="sidebar">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html"><i class="bi bi-house-door"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="classes.html"><i class="bi bi-people"></i> Classes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="about.html"><i class="bi bi-info-circle"></i> About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="pricing.html"><i class="bi bi-tag"></i> Pricing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="appointments.html"><i class="bi bi-calendar-check"></i> Appointments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="users.html"><i class="bi bi-people"></i> Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="payments.html"><i class="bi bi-credit-card"></i> Payments</a>
+                </li>
+            </ul>
+        </nav>
+        <div class="content">
+            <section>
+                <h2><i class="bi bi-pencil-square"></i> Edit Hero Section</h2>
+                <form id="edit-hero">
+                    <div class="mb-3">
+                        <label for="hero-title" class="form-label">Title:</label>
+                        <input type="text" class="form-control" id="hero-title" name="title" value="About IronFist Gym">
+                    </div>
+                    <div class="mb-3">
+                        <label for="hero-subtitle" class="form-label">Subtitle:</label>
+                        <input type="text" class="form-control" id="hero-subtitle" name="subtitle" value="Where Passion Meets Discipline">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="updateHero()">Update Hero</button>
+                </form>
+            </section>
+            <section>
+                <h2><i class="bi bi-pencil-square"></i> Edit Story Section</h2>
+                <form id="edit-story">
+                    <div class="mb-3">
+                        <label for="story-title" class="form-label">Title:</label>
+                        <input type="text" class="form-control" id="story-title" name="title" value="Our Story">
+                    </div>
+                    <div class="mb-3">
+                        <label for="story-intro" class="form-label">Intro:</label>
+                        <textarea class="form-control" id="story-intro" name="intro">Founded in 2015, IronFist Gym was born out of a passion for martial arts and a desire to create a community where everyone feels welcome. Whether you're a beginner or a seasoned fighter, we’re here to help you achieve your goals.</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="story-mission" class="form-label">Mission:</label>
+                        <textarea class="form-control" id="story-mission" name="mission">Our gym is more than just a place to train—it’s a family. We believe in the power of martial arts to transform lives, build confidence, and foster discipline.</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="story-image" class="form-label">Image URL:</label>
+                        <input type="text" class="form-control" id="story-image" name="image" value="https://placehold.co/600x400">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="updateStory()">Update Story</button>
+                </form>
+            </section>
+            <section>
+                <h2><i class="bi bi-people"></i> Edit Team Section</h2>
+                <form id="edit-team">
+                    <div id="team-members"></div>
+                    <button type="button" class="btn btn-primary" onclick="openTeamModal()">Add Team Member</button>
+                </form>
+            </section>
+            <section>
+                <h2><i class="bi bi-star"></i> Edit Why Choose Us Section</h2>
+                <form id="edit-why-choose-us">
+                    <div id="why-choose-us-items"></div>
+                    <button type="button" class="btn btn-primary" onclick="openWhyChooseUsModal()">Add Item</button>
+                </form>
+            </section>
+        </div>
+    </div>
+
+    <!-- Modal for Team Member -->
+    <div id="teamModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('teamModal')">&times;</span>
+            <h2 id="teamModalTitle">Add Team Member</h2>
+            <form id="teamMemberForm">
+                <div class="mb-3">
+                    <label for="team-name" class="form-label">Name:</label>
+                    <input type="text" class="form-control" id="team-name" name="name">
+                </div>
+                <div class="mb-3">
+                    <label for="team-role" class="form-label">Role:</label>
+                    <input type="text" class="form-control" id="team-role" name="role">
+                </div>
+                <div class="mb-3">
+                    <label for="team-description" class="form-label">Description:</label>
+                    <textarea class="form-control" id="team-description" name="description"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="team-image" class="form-label">Image URL:</label>
+                    <input type="text" class="form-control" id="team-image" name="image">
+                </div>
+                <button type="button" class="btn btn-primary" onclick="saveTeamMember()">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Why Choose Us Item -->
+    <div id="whyChooseUsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('whyChooseUsModal')">&times;</span>
+            <h2 id="whyChooseUsModalTitle">Add Item</h2>
+            <form id="whyChooseUsForm">
+                <div class="mb-3">
+                    <label for="why-title" class="form-label">Title:</label>
+                    <input type="text" class="form-control" id="why-title" name="title">
+                </div>
+                <div class="mb-3">
+                    <label for="why-description" class="form-label">Description:</label>
+                    <textarea class="form-control" id="why-description" name="description"></textarea>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="saveWhyChooseUsItem()">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sample initial data
+        let aboutData = {
+            "hero": {
+                "title": "About IronFist Gym",
+                "subtitle": "Where Passion Meets Discipline"
+            },
+            "story": {
+                "title": "Our Story",
+                "intro": "Founded in 2015, IronFist Gym was born out of a passion for martial arts and a desire to create a community where everyone feels welcome. Whether you're a beginner or a seasoned fighter, we’re here to help you achieve your goals.",
+                "mission": "Our gym is more than just a place to train—it’s a family. We believe in the power of martial arts to transform lives, build confidence, and foster discipline.",
+                "image": "https://placehold.co/600x400"
+            },
+            "team": [
+                {
+                    "name": "John Doe",
+                    "role": "Head Boxing Coach",
+                    "description": "With over 10 years of experience, John has trained champions and beginners alike.",
+                    "image": "https://placehold.co/300x300"
+                },
+                {
+                    "name": "Jane Smith",
+                    "role": "Muay Thai Specialist",
+                    "description": "Jane brings a wealth of knowledge and a passion for teaching Muay Thai.",
+                    "image": "https://placehold.co/300x300"
+                },
+                {
+                    "name": "Mike Johnson",
+                    "role": "BJJ Black Belt",
+                    "description": "Mike is dedicated to helping students master the art of Brazilian Jiu-Jitsu.",
+                    "image": "https://placehold.co/300x300"
+                }
+            ],
+            "why_choose_us": [
+                {
+                    "title": "Expert Instructors",
+                    "description": "Our coaches are highly trained and passionate about helping you succeed."
+                },
+                {
+                    "title": "State-of-the-Art Facilities",
+                    "description": "Train in a clean, modern, and fully equipped gym."
+                },
+                {
+                    "title": "Supportive Community",
+                    "description": "Join a welcoming community that motivates and inspires you."
+                }
+            ]
+        };
+
+        let currentEditIndex = -1;
+        let currentEditType = '';
+
+        // Render the team members and why choose us items on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTeamMembers();
+            renderWhyChooseUsItems();
+            document.querySelector('.burger-menu').addEventListener('click', function() {
+                var sidebar = document.getElementById('sidebar');
+                sidebar.classList.toggle('open');
+            });
+
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            document.getElementById('language-select').addEventListener('change', function() {
+                const selectedLanguage = this.value;
+                alert('Language changed to ' + selectedLanguage);
+            });
+
+            // Highlight the current nav item
+            const currentPage = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('nav ul li a');
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        // Function to update hero section
+        function updateHero() {
+            aboutData.hero.title = document.getElementById('hero-title').value;
+            aboutData.hero.subtitle = document.getElementById('hero-subtitle').value;
+            alert('Hero section updated');
+        }
+
+        // Function to update story section
+        function updateStory() {
+            aboutData.story.title = document.getElementById('story-title').value;
+            aboutData.story.intro = document.getElementById('story-intro').value;
+            aboutData.story.mission = document.getElementById('story-mission').value;
+            aboutData.story.image = document.getElementById('story-image').value;
+            alert('Story section updated');
+        }
+
+        // Functions to manage team members
+        function renderTeamMembers() {
+            const container = document.getElementById('team-members');
+            container.innerHTML = '';
+            aboutData.team.forEach((member, index) => {
+                const memberDiv = document.createElement('div');
+                memberDiv.className = 'item';
+                memberDiv.innerHTML = `
+                    <h3>${member.name}</h3>
+                    <p><strong>Role:</strong> ${member.role}</p>
+                    <p><strong>Description:</strong> ${member.description}</p>
+                    <p><strong>Image URL:</strong> ${member.image}</p>
+                    <div class="item-actions">
+                        <button type="button" class="btn btn-warning" onclick="openTeamModal(${index})">Edit</button>
+                        <button type="button" class="btn btn-danger" onclick="deleteTeamMember(${index})">Delete</button>
+                    </div>
+                `;
+                container.appendChild(memberDiv);
+            });
+        }
+
+        function openTeamModal(index = -1) {
+            currentEditIndex = index;
+            currentEditType = 'team';
+            const modal = document.getElementById('teamModal');
+            const form = document.getElementById('teamMemberForm');
+            if (index === -1) {
+                document.getElementById('teamModalTitle').textContent = 'Add Team Member';
+                form.reset();
+            } else {
+                document.getElementById('teamModalTitle').textContent = 'Edit Team Member';
+                const member = aboutData.team[index];
+                document.getElementById('team-name').value = member.name;
+                document.getElementById('team-role').value = member.role;
+                document.getElementById('team-description').value = member.description;
+                document.getElementById('team-image').value = member.image;
+            }
+            modal.style.display = 'block';
+        }
+
+        function saveTeamMember() {
+            const name = document.getElementById('team-name').value;
+            const role = document.getElementById('team-role').value;
+            const description = document.getElementById('team-description').value;
+            const image = document.getElementById('team-image').value;
+
+            const newMember = { name, role, description, image };
+
+            if (currentEditIndex === -1) {
+                aboutData.team.push(newMember);
+            } else {
+                aboutData.team[currentEditIndex] = newMember;
+            }
+
+            closeModal('teamModal');
+            renderTeamMembers();
+        }
+
+        function deleteTeamMember(index) {
+            aboutData.team.splice(index, 1);
+            renderTeamMembers();
+        }
+
+        // Functions to manage why choose us items
+        function renderWhyChooseUsItems() {
+            const container = document.getElementById('why-choose-us-items');
+            container.innerHTML = '';
+            aboutData.why_choose_us.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'item';
+                itemDiv.innerHTML = `
+                    <h3>${item.title}</h3>
+                    <p>${item.description}</p>
+                    <div class="item-actions">
+                        <button type="button" class="btn btn-warning" onclick="openWhyChooseUsModal(${index})">Edit</button>
+                        <button type="button" class="btn btn-danger" onclick="deleteWhyChooseUsItem(${index})">Delete</button>
+                    </div>
+                `;
+                container.appendChild(itemDiv);
+            });
+        }
+
+        function openWhyChooseUsModal(index = -1) {
+            currentEditIndex = index;
+            currentEditType = 'why_choose_us';
+            const modal = document.getElementById('whyChooseUsModal');
+            const form = document.getElementById('whyChooseUsForm');
+            if (index === -1) {
+                document.getElementById('whyChooseUsModalTitle').textContent = 'Add Item';
+                form.reset();
+            } else {
+                document.getElementById('whyChooseUsModalTitle').textContent = 'Edit Item';
+                const item = aboutData.why_choose_us[index];
+                document.getElementById('why-title').value = item.title;
+                document.getElementById('why-description').value = item.description;
+            }
+            modal.style.display = 'block';
+        }
+
+        function saveWhyChooseUsItem() {
+            const title = document.getElementById('why-title').value;
+            const description = document.getElementById('why-description').value;
+
+            const newItem = { title, description };
+
+            if (currentEditIndex === -1) {
+                aboutData.why_choose_us.push(newItem);
+            } else {
+                aboutData.why_choose_us[currentEditIndex] = newItem;
+            }
+
+            closeModal('whyChooseUsModal');
+            renderWhyChooseUsItems();
+        }
+
+        function deleteWhyChooseUsItem(index) {
+            aboutData.why_choose_us.splice(index, 1);
+            renderWhyChooseUsItems();
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            currentEditIndex = -1;
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const teamModal = document.getElementById('teamModal');
+            const whyChooseUsModal = document.getElementById('whyChooseUsModal');
+            if (event.target == teamModal) {
+                closeModal('teamModal');
+            }
+            if (event.target == whyChooseUsModal) {
+                closeModal('whyChooseUsModal');
+            }
+        }
+
+        
+        // Close modal when pressing ESC key
+        document.addEventListener('keydown', function(event) {            
+            if (event.key === "Escape" ) {
+                 closeModal('teamModal');
+                 closeModal('whyChooseUsModal');
+            }
+        });
+    </script>
+</body>
+</html>
