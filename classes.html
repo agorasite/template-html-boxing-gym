@@ -146,74 +146,130 @@
 
 
   <script>
-    async function loadClassesPage() {
-      try {
-        const res = await fetch("http://localhost:8080/api/bff/classpage");
-        const data = await res.json();
-        
-        // Hero Section
-        document.getElementById("classes-hero-title").textContent = data.title;
-        document.getElementById("classes-hero-subtitle").textContent = data.description;
-  
-        // Class Offerings
-        const offeringsContainer = document.getElementById("class-offerings-container");
-        offeringsContainer.innerHTML = "";
-        data.offerings.forEach(cls => {
-          offeringsContainer.insertAdjacentHTML("beforeend", `
-            <div class="col-md-4 mb-4">
-              <div class="card">
-                <img src="${cls.image}" alt="${cls.title}" class="card-img-top">
-                <div class="card-body">
-                  <h3 class="card-title">${cls.title}</h3>
-                  <p class="card-text">${cls.description}</p>
-                  <a href="signup.html" class="btn btn-danger">Sign Up Now</a>
-                </div>
-              </div>
-            </div>
-          `);
-        });
-  
-        //Weekly Schedule
-        const scheduleContainer = document.getElementById("schedule-container");
-        scheduleContainer.innerHTML = "";
-        for (const [day, sessions] of Object.entries(data.schedule)) {
-          let sessionsHTML = sessions.map(s => 
-            s.start_time ? `<p class="card-text"><strong>${s.class}</strong><br>${s.start_time}- ${s.end_time}</p>` 
-                   : `<p class="card-text">${s.class} ${s.capacity}</p>`
-          ).join("");
-          scheduleContainer.insertAdjacentHTML("beforeend", `
-            <div class="col-md">
-              <div class="card text-center mb-4">
-                <div class="card-header bg-danger text-white">
-                  <h4>${day}</h4>
-                </div>
-                <div class="card-body">${sessionsHTML}</div>
-              </div>
-            </div>
-          `);
+    function loadClassesPage() {
+      const data = {
+        title: "Our Classes",
+        description: "Find the right discipline for you — from beginner to advanced.",
+        offerings: [
+          {
+            title: "Boxing",
+            image: "assets/img/boxing.jpg",
+            description: "Learn the fundamentals of boxing — stance, footwork, combinations and defence. Suitable for all levels."
+          },
+          {
+            title: "Kickboxing",
+            image: "assets/img/kickboxing.jpg",
+            description: "A high-energy class combining punches and kicks. Great cardio workout and effective self-defence."
+          },
+          {
+            title: "Judo",
+            image: "assets/img/judo.jpg",
+            description: "Master throws, sweeps and ground control. Build balance, strength and discipline on the mat."
+          },
+          {
+            title: "Advanced Boxing",
+            image: "assets/img/boxing2.jpg",
+            description: "Sharpen your technique with advanced combinations, sparring drills and ring strategy sessions."
+          },
+          {
+            title: "Boxing Conditioning",
+            image: "assets/img/boxing3.jpg",
+            description: "Build the endurance and power of a boxer. Bag work, circuits and pad rounds at full intensity."
+          },
+          {
+            title: "Judo Competition Prep",
+            image: "assets/img/judo2.jpg",
+            description: "Intensive training focused on competition rules, randori and tournament-level technique."
+          }
+        ],
+        schedule: {
+          "Monday": [
+            { class: "Boxing", start_time: "09:00", end_time: "10:00" },
+            { class: "Judo", start_time: "18:00", end_time: "19:30" }
+          ],
+          "Tuesday": [
+            { class: "Kickboxing", start_time: "07:00", end_time: "08:00" },
+            { class: "Adv. Boxing", start_time: "19:00", end_time: "20:30" }
+          ],
+          "Wednesday": [
+            { class: "Boxing", start_time: "09:00", end_time: "10:00" },
+            { class: "Conditioning", start_time: "18:00", end_time: "19:00" }
+          ],
+          "Thursday": [
+            { class: "Judo", start_time: "07:00", end_time: "08:30" },
+            { class: "Kickboxing", start_time: "19:00", end_time: "20:00" }
+          ],
+          "Friday": [
+            { class: "Boxing", start_time: "09:00", end_time: "10:00" },
+            { class: "Adv. Boxing", start_time: "18:00", end_time: "19:30" }
+          ],
+          "Saturday": [
+            { class: "Judo Comp Prep", start_time: "10:00", end_time: "12:00" },
+            { class: "Open Sparring", start_time: "12:30", end_time: "14:00" }
+          ]
+        },
+        cta: {
+          title: "Ready to Start Training?",
+          description: "Join today and get your first week free. No experience needed.",
+          button: "Sign Up Now"
         }
-  
-        // CTA Section
-        document.getElementById("cta-title").textContent = data.cta.title;
-        document.getElementById("cta-subtitle").textContent = data.cta.description;
-        document.getElementById("cta-button").textContent = data.cta.button;
-  
-      } catch (err) {
-        console.error("Error loading classes page:", err);
-      }finally {
-        // Fade in content after data is loaded
-        document.getElementById("loader").style.display = "none";
-        const content = document.getElementById("pageContent");
-        content.style.display = "block";
-        content.style.opacity = 0;
-        content.style.transition = "opacity 0.5s";
-        requestAnimationFrame(() => content.style.opacity = 1);
-      }
-    }
-  
-  // Load classes page on DOMContentLoaded
+      };
 
-  
+      // Hero Section
+      document.getElementById("classes-hero-title").textContent = data.title;
+      document.getElementById("classes-hero-subtitle").textContent = data.description;
+
+      // Class Offerings
+      const offeringsContainer = document.getElementById("class-offerings-container");
+      offeringsContainer.innerHTML = "";
+      data.offerings.forEach(cls => {
+        offeringsContainer.insertAdjacentHTML("beforeend", `
+          <div class="col-md-4 mb-4">
+            <div class="card h-100">
+              <img src="${cls.image}" alt="${cls.title}" class="card-img-top" style="height:220px;object-fit:cover;">
+              <div class="card-body d-flex flex-column">
+                <h3 class="card-title">${cls.title}</h3>
+                <p class="card-text flex-grow-1">${cls.description}</p>
+                <a href="signup.html" class="btn btn-danger mt-3">Sign Up Now</a>
+              </div>
+            </div>
+          </div>
+        `);
+      });
+
+      // Weekly Schedule
+      const scheduleContainer = document.getElementById("schedule-container");
+      scheduleContainer.innerHTML = "";
+      for (const [day, sessions] of Object.entries(data.schedule)) {
+        const sessionsHTML = sessions.map(s =>
+          `<p class="card-text"><strong>${s.class}</strong><br><small class="text-muted">${s.start_time} – ${s.end_time}</small></p>`
+        ).join("");
+        scheduleContainer.insertAdjacentHTML("beforeend", `
+          <div class="col-md mb-4">
+            <div class="card text-center h-100">
+              <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">${day}</h5>
+              </div>
+              <div class="card-body">${sessionsHTML}</div>
+            </div>
+          </div>
+        `);
+      }
+
+      // CTA Section
+      document.getElementById("cta-title").textContent = data.cta.title;
+      document.getElementById("cta-subtitle").textContent = data.cta.description;
+      document.getElementById("cta-button").textContent = data.cta.button;
+
+      // Fade in content
+      document.getElementById("loader").style.display = "none";
+      const content = document.getElementById("pageContent");
+      content.style.display = "block";
+      content.style.opacity = 0;
+      content.style.transition = "opacity 0.5s";
+      requestAnimationFrame(() => content.style.opacity = 1);
+    }
+
     document.addEventListener("DOMContentLoaded", loadClassesPage);
   </script>
   

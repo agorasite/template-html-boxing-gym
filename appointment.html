@@ -212,39 +212,53 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <!-- Custom JS -->
   <script>
-    // Initialize Flatpickr Date Picker
     flatpickr("#datePicker", {
-      minDate: "today", // Disable past dates
-      dateFormat: "Y-m-d", // Date format
+      minDate: "today",
+      dateFormat: "Y-m-d"
     });
 
-    // Handle Click on Available Slots
-    document.querySelectorAll(".available-slot").forEach(slot => {
-      slot.addEventListener("click", () => {
-        const day = slot.getAttribute("data-day");
-        const time = slot.getAttribute("data-time");
+    function loadAvailability() {
+      const data = {
+        "07:00": { Mon: false, Tue: true,  Wed: false, Thu: true,  Fri: false, Sat: false, Sun: false },
+        "09:00": { Mon: true,  Tue: false, Wed: true,  Thu: false, Fri: true,  Sat: false, Sun: false },
+        "10:00": { Mon: false, Tue: false, Wed: false, Thu: false, Fri: false, Sat: true,  Sun: false },
+        "12:30": { Mon: false, Tue: false, Wed: false, Thu: false, Fri: false, Sat: true,  Sun: false },
+        "18:00": { Mon: true,  Tue: false, Wed: true,  Thu: false, Fri: true,  Sat: false, Sun: false },
+        "19:00": { Mon: false, Tue: true,  Wed: false, Thu: true,  Fri: false, Sat: false, Sun: false }
+      };
 
-        // Set the selected day and time in the form
-        const datePicker = document.getElementById("datePicker");
-        const timeSlot = document.getElementById("timeSlot");
+      const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+      const container = document.getElementById("availability-map");
+      container.innerHTML = Object.entries(data).map(([time, slots]) => {
+        const cells = days.map(day => slots[day]
+          ? `<td><span class="available-slot badge bg-success px-2 py-1" data-day="${day}" data-time="${time}" style="cursor:pointer;">✓</span></td>`
+          : `<td><i class="fas fa-times text-danger"></i></td>`
+        ).join("");
+        return `<tr><td><strong>${time}</strong></td>${cells}</tr>`;
+      }).join("");
 
-        // Calculate the next occurrence of the selected day
-        const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        const selectedDayIndex = daysOfWeek.indexOf(day);
-        const today = new Date();
-        const daysUntilSelectedDay = (selectedDayIndex - today.getDay() + 7) % 7;
-        const selectedDate = new Date(today);
-        selectedDate.setDate(today.getDate() + daysUntilSelectedDay);
+      document.querySelectorAll(".available-slot").forEach(slot => {
+        slot.addEventListener("click", () => {
+          document.querySelectorAll(".available-slot").forEach(s => s.classList.remove("selected", "bg-warning"));
+          slot.classList.add("selected", "bg-warning");
 
-        // Set the date picker value
-        datePicker._flatpickr.setDate(selectedDate);
+          const day = slot.getAttribute("data-day");
+          const time = slot.getAttribute("data-time");
 
-        // Set the time slot value
-        timeSlot.value = time;
+          const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+          const selectedDayIndex = daysOfWeek.indexOf(day);
+          const today = new Date();
+          const daysUntil = (selectedDayIndex - today.getDay() + 7) % 7 || 7;
+          const selectedDate = new Date(today);
+          selectedDate.setDate(today.getDate() + daysUntil);
+
+          document.getElementById("datePicker")._flatpickr.setDate(selectedDate);
+          document.getElementById("timeSlot").value = time;
+        });
       });
-    });
+    }
 
-    document.getElementById("appointmentForm").addEventListener("submit", async function (e) {
+    document.getElementById("appointmentForm").addEventListener("submit", function (e) {
       e.preventDefault();
 
       const date = document.getElementById("datePicker").value;
@@ -252,140 +266,19 @@
       const fullName = document.getElementById("fullName").value;
       const email = document.getElementById("email").value;
       const phone = document.getElementById("phone").value;
-      const notes = document.getElementById("notes").value;
 
       if (!date || !time || !fullName || !email || !phone) {
         alert("Please fill out all required fields.");
         return;
       }
 
-      try {
-        const res = await fetch("http://localhost:8080/api/appointments/book", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          body: JSON.stringify({
-            date,
-            time,
-            fullName,
-            email,
-            phone,
-            notes
-          })
-        });
-
-        const result = await res.json();
-        console.log("Appointment Response:", result);
-
-        // Show confirmation modal
-        document.getElementById("modalDate").textContent = date;
-        document.getElementById("modalTime").textContent = time;
-        const confirmationModal = new bootstrap.Modal(document.getElementById("confirmationModal"));
-        confirmationModal.show();
-
-        // Reset form
-        document.getElementById("appointmentForm").reset();
-
-      } catch (err) {
-        console.error("Booking failed:", err);
-        alert("There was an error booking your appointment.");
-      }
+      document.getElementById("modalDate").textContent = date;
+      document.getElementById("modalTime").textContent = time;
+      new bootstrap.Modal(document.getElementById("confirmationModal")).show();
+      document.getElementById("appointmentForm").reset();
     });
 
-
-
-
-    // Handle Click on Available Slots
-    document.querySelectorAll(".available-slot").forEach(slot => {
-        slot.addEventListener("click", () => {
-            // Remove 'selected' class from all slots
-            document.querySelectorAll(".available-slot").forEach(s => s.classList.remove("selected"));
-
-            // Add 'selected' class to the clicked slot
-            slot.classList.add("selected");
-
-            const day = slot.getAttribute("data-day");
-            const time = slot.getAttribute("data-time");
-
-            // Set the selected day and time in the form
-            const datePicker = document.getElementById("datePicker");
-            const timeSlot = document.getElementById("timeSlot");
-
-            // Calculate the next occurrence of the selected day
-            const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-            const selectedDayIndex = daysOfWeek.indexOf(day);
-            const today = new Date();
-            const daysUntilSelectedDay = (selectedDayIndex - today.getDay() + 7) % 7;
-            const selectedDate = new Date(today);
-            selectedDate.setDate(today.getDate() + daysUntilSelectedDay);
-
-            // Set the date picker value
-            datePicker._flatpickr.setDate(selectedDate);
-
-            // Set the time slot value
-            timeSlot.value = time;
-        });
-    });
-    
-    async function loadAvailability() {
-      const container = document.getElementById("availability-map");
-      container.innerHTML = '<tr><td colspan="8" class="text-center">Loading...</td></tr>';
-
-      try {
-        const res = await fetch("http://localhost:8080/api/bff/appointments");
-        const data = await res.json();
-
-        const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-        const rows = Object.entries(data).map(([time, slots]) => {
-          const cells = days.map(day => {
-            if (slots[day]) {
-              return `<td><i class="fas fa-check text-success available-slot" data-day="${day}" data-time="${time}"></i></td>`;
-            } else {
-              return `<td><i class="fas fa-times text-danger"></i></td>`;
-            }
-          }).join("");
-          return `<tr><td>${time}</td>${cells}</tr>`;
-        });
-
-        container.innerHTML = rows.join("");
-        attachSlotListeners();
-      } catch (err) {
-        console.error("Failed to load availability:", err);
-        container.innerHTML = '<tr><td colspan="8" class="text-center text-danger">Error loading availability.</td></tr>';
-      }
-    }
-
-    function attachSlotListeners() {
-      document.querySelectorAll(".available-slot").forEach(slot => {
-        slot.addEventListener("click", () => {
-          document.querySelectorAll(".available-slot").forEach(s => s.classList.remove("selected"));
-          slot.classList.add("selected");
-
-          const day = slot.getAttribute("data-day");
-          const time = slot.getAttribute("data-time");
-          const datePicker = document.getElementById("datePicker");
-          const timeSlot = document.getElementById("timeSlot");
-
-          const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-          const selectedDayIndex = daysOfWeek.indexOf(day);
-          const today = new Date();
-          const daysUntilSelectedDay = (selectedDayIndex - today.getDay() + 7) % 7;
-          const selectedDate = new Date(today);
-          selectedDate.setDate(today.getDate() + daysUntilSelectedDay);
-
-          datePicker._flatpickr.setDate(selectedDate);
-          timeSlot.value = time;
-        });
-      });
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      loadAvailability();
-    });
-
-
+    document.addEventListener("DOMContentLoaded", loadAvailability);
   </script>
 </body>
 </html>

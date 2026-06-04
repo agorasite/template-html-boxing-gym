@@ -137,81 +137,137 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    async function loadPricing() {
-      try {
-        const res = await fetch("http://localhost:8080/api/bff/pricingpage");
-        const data = await res.json();
-    
-        // Hero
-        document.querySelector(".pricing-hero h1").textContent = data.hero.title;
-        document.querySelector(".pricing-hero p").textContent = data.hero.subtitle;
-    
-        // Pricing Plans
-        const plansContainer = document.querySelector(".pricing-plans .row");
-        plansContainer.innerHTML = "";
-        data.plans.forEach(plan => {
-          const features = plan.features.map(f => `<li>${f}</li>`).join("");
-          const card = `
-            <div class="col-md-4 mb-4">
-              <div class="card text-center">
-                <div class="card-header bg-black text-white">
-                  <h3>${plan.name}</h3>
-                </div>
-                <div class="card-body">
-                  <h4 class="card-title">${plan.price}</h4>
-                  <ul class="list-unstyled">${features}</ul>
-                  <a href="signup.html" class="btn btn-danger">Sign Up</a>
-                </div>
-              </div>
-            </div>`;
-          plansContainer.insertAdjacentHTML("beforeend", card);
-        });
-    
-        // Special Offers
-        const offersContainer = document.querySelector(".special-offers .row");
-        offersContainer.innerHTML = "";
-        data.offers.forEach(offer => {
-          const card = `
-            <div class="col-md-6">
-              <div class="card mb-4">
-                <div class="card-body">
-                  <h3 class="card-title">${offer.title}</h3>
-                  <p class="card-text">${offer.description}</p>
-                </div>
-              </div>
-            </div>`;
-          offersContainer.insertAdjacentHTML("beforeend", card);
-        });
-    
-        // CTA
-        document.querySelector(".cta h2").textContent = data.cta.title;
-        document.querySelector(".cta p").textContent = data.cta.subtitle;
-    
-      } catch (err) {
-        console.error("Error loading pricing data:", err);
-      }finally {
-        // Fade in content after data is loaded
-        document.getElementById("loader").style.display = "none";
-        const content = document.getElementById("pageContent");
-        content.style.display = "block";
-        content.style.opacity = 0;
-        content.style.transition = "opacity 0.5s";
-        requestAnimationFrame(() => content.style.opacity = 1);
-      }
-    }
-    
-    document.addEventListener("DOMContentLoaded", () => {
-      loadPricing();
-    
-      // Mark nav link active
-      const currentPage = location.pathname.split("/").pop();
-      document.querySelectorAll(".navbar-nav .nav-link").forEach(link => {
-        if (link.getAttribute("href") === currentPage) {
-          link.classList.add("active");
+    function loadPricing() {
+      const data = {
+        hero: {
+          title: "Simple, Transparent Pricing",
+          subtitle: "No hidden fees. Choose the plan that fits your goals."
+        },
+        plans: [
+          {
+            name: "Starter",
+            price: "€39 / month",
+            featured: false,
+            features: [
+              "Access to 2 classes per week",
+              "1 discipline of your choice",
+              "Locker room access",
+              "Cancel anytime"
+            ]
+          },
+          {
+            name: "Fighter",
+            price: "€69 / month",
+            featured: true,
+            features: [
+              "Unlimited classes",
+              "All disciplines included",
+              "Locker room & showers",
+              "1 PT session per month",
+              "Priority booking"
+            ]
+          },
+          {
+            name: "Champion",
+            price: "€99 / month",
+            featured: false,
+            features: [
+              "Unlimited classes",
+              "All disciplines included",
+              "4 PT sessions per month",
+              "Competition prep coaching",
+              "Nutrition guidance",
+              "Priority booking"
+            ]
+          }
+        ],
+        offers: [
+          {
+            title: "First Week Free",
+            description: "New members get their first week completely free — no credit card required. Come train, meet the team and see if we're the right fit for you."
+          },
+          {
+            title: "Student Discount — 20% Off",
+            description: "Full-time students get 20% off any monthly plan. Valid student ID required at sign-up."
+          },
+          {
+            title: "Bring a Friend",
+            description: "Refer a friend who joins any paid plan and you both get one month at half price."
+          },
+          {
+            title: "Annual Plan — 2 Months Free",
+            description: "Pay for 10 months upfront and train for 12. Available on Fighter and Champion plans."
+          }
+        ],
+        cta: {
+          title: "Ready to Join?",
+          subtitle: "Start with a free trial class — no commitment, no equipment needed."
         }
+      };
+
+      // Hero
+      document.querySelector(".pricing-hero h1").textContent = data.hero.title;
+      document.querySelector(".pricing-hero p").textContent = data.hero.subtitle;
+
+      // Pricing Plans
+      const plansContainer = document.querySelector(".pricing-plans .row");
+      plansContainer.innerHTML = "";
+      data.plans.forEach(plan => {
+        const features = plan.features.map(f => `<li class="py-1"><i class="fas fa-check text-danger me-2"></i>${f}</li>`).join("");
+        const featured = plan.featured
+          ? 'border-danger border-2 shadow-lg'
+          : '';
+        const badge = plan.featured
+          ? '<span class="badge bg-danger mb-2">Most Popular</span><br>'
+          : '';
+        plansContainer.insertAdjacentHTML("beforeend", `
+          <div class="col-md-4 mb-4">
+            <div class="card text-center h-100 ${featured}">
+              <div class="card-header bg-black text-white py-3">
+                ${badge}
+                <h3 class="mb-0">${plan.name}</h3>
+              </div>
+              <div class="card-body d-flex flex-column">
+                <h4 class="card-title my-3 text-danger">${plan.price}</h4>
+                <ul class="list-unstyled text-start flex-grow-1">${features}</ul>
+                <a href="signup.html" class="btn btn-danger mt-3">Sign Up</a>
+              </div>
+            </div>
+          </div>
+        `);
       });
-    });
-    </script>
+
+      // Special Offers
+      const offersContainer = document.querySelector(".special-offers .row");
+      offersContainer.innerHTML = "";
+      data.offers.forEach(offer => {
+        offersContainer.insertAdjacentHTML("beforeend", `
+          <div class="col-md-6 mb-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-tag text-danger me-2"></i>${offer.title}</h5>
+                <p class="card-text">${offer.description}</p>
+              </div>
+            </div>
+          </div>
+        `);
+      });
+
+      // CTA
+      document.querySelector(".cta h2").textContent = data.cta.title;
+      document.querySelector(".cta p").textContent = data.cta.subtitle;
+
+      // Fade in content
+      document.getElementById("loader").style.display = "none";
+      const content = document.getElementById("pageContent");
+      content.style.display = "block";
+      content.style.opacity = 0;
+      content.style.transition = "opacity 0.5s";
+      requestAnimationFrame(() => content.style.opacity = 1);
+    }
+
+    document.addEventListener("DOMContentLoaded", loadPricing);
+  </script>
     
 </body>
 </html>
