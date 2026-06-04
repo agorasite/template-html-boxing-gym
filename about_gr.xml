@@ -6,28 +6,28 @@
     </title>
     <images>
       <image main="true">
-        <path>templates/BoxingGym/boxinggym1/assets/screenshots/index.png</path>
+        <path>assets/screenshots/index.png</path>
       </image>
       <image>
-        <path>templates/BoxingGym/boxinggym1/assets/screenshots/about.png</path>
+        <path>assets/screenshots/about.png</path>
       </image>
       <image>
-        <path>templates/BoxingGym/boxinggym1/assets/screenshots/appointment.png</path>
+        <path>assets/screenshots/appointment.png</path>
       </image>
       <image>
-        <path>templates/BoxingGym/boxinggym1/assets/screenshots/classes.png</path>
+        <path>assets/screenshots/classes.png</path>
       </image>
       <image>
-        <path>templates/BoxingGym/boxinggym1/assets/screenshots/contact.png</path>
+        <path>assets/screenshots/contact.png</path>
       </image>
       <image>
-        <path>templates/BoxingGym/boxinggym1/assets/screenshots/pricing.png</path>
+        <path>assets/screenshots/pricing.png</path>
       </image>
       <image>
-        <path>templates/BoxingGym/boxinggym1/assets/screenshots/profile.png</path>
+        <path>assets/screenshots/profile.png</path>
       </image>
       <image>
-        <path>templates/BoxingGym/boxinggym1/assets/screenshots/signup.png</path>
+        <path>assets/screenshots/signup.png</path>
       </image>
     </images>
     <technologies>
